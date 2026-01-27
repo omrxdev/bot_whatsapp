@@ -1,0 +1,21 @@
+2026/01/26-23:31:48.511 3ce2 Reusing MANIFEST /home/omarmohammed/Projects/MyBot/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/01/26-23:31:48.511 3ce2 Recovering log #3
+2026/01/26-23:31:48.513 3ce2 Reusing old log /home/omarmohammed/Projects/MyBot/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000003.log 
+2026/01/26-23:31:48.560 3ce2 Level-0 table #5: started
+2026/01/26-23:31:48.564 3ce2 Level-0 table #5: 20455 bytes OK
+2026/01/26-23:31:48.568 3ce2 Delete type=0 #3
+2026/01/26-23:31:48.568 3ce2 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/01/26-23:31:48.756 3ce0 Level-0 table #7: started
+2026/01/26-23:31:48.759 3ce0 Level-0 table #7: 6888 bytes OK
+2026/01/26-23:31:48.762 3ce0 Delete type=0 #4
+2026/01/26-23:31:48.763 3ce0 Manual compaction at level-0 from '\x00\x03\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x04\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/01/26-23:31:50.594 3ce2 Level-0 table #9: started
+2026/01/26-23:31:50.626 3ce2 Level-0 table #9: 19332 bytes OK
+2026/01/26-23:31:50.640 3ce2 Delete type=0 #6
+2026/01/26-23:31:50.641 3ce2 Manual compaction at level-0 from '\x00\x0b\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x0c\x00\x00\x00' @ 0 : 0; will stop at '\x00\x0f\x00\x00\x05' @ 2968 : 1
+2026/01/26-23:31:50.641 3ce2 Compacting 1@0 + 1@1 files
+2026/01/26-23:31:50.648 3ce2 Generated table #10@0: 867 keys, 13939 bytes
+2026/01/26-23:31:50.648 3ce2 Compacted 1@0 + 1@1 files => 13939 bytes
+2026/01/26-23:31:50.657 3ce2 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/01/26-23:31:50.657 3ce2 Delete type=2 #9
+2026/01/26-23:31:50.657 3ce2 Manual compaction at level-0 from '\x00\x0f\x00\x00\x05' @ 2968 : 1 .. '\x00\x0c\x00\x00\x00' @ 0 : 0; will stop at (end)
