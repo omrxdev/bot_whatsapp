@@ -1,21 +1,21 @@
 const {
-  default: makeWASocket,
-  useMultiFileAuthState,
-  DisconnectReason,
-  downloadMediaMessage,
+default: makeWASocket,
+useMultiFileAuthState,
+DisconnectReason,
+downloadMediaMessage,
 } = require("@whiskeysockets/baileys");
-const qrcode = require("qrcode-terminal"); // Fixed: renamed from 'code' to 'qrcode'
+const qrcode = require("qrcode-terminal");
 const P = require("pino");
 const fs = require("fs");
 const path = require("path");
-const inquirer = require("inquirer"); // Ensure inquirer@8.2.6 is installed
-const chalk = require("chalk"); // Added chalk@4.1.2 for colored output
+const inquirer = require("inquirer"); // installed inquirer@latest
+const chalk = require("chalk"); // Added chalk@latest
 const { setupGlobalHotReload } = require("./functions/reloadCommands");
 const SESSIONS_DIR = "sessions";
 const commandsPath = path.join(__dirname, "commands");
 const sessionCommandsPath = path.join(__dirname, "sessionsCommands");
 if (!fs.existsSync(SESSIONS_DIR)) {
-  try {
+try {
 	fs.mkdirSync(SESSIONS_DIR);
 	console.log(chalk.green("Created sessions directory"));
   } catch (error) {
@@ -340,59 +340,59 @@ async function startBotInstance(sessionName, options = {}) {
 
 	// Handle incoming messages with improved error handling
 	sock.ev.on("messages.upsert", async (m) => {
-	  try {
+	try {
 		if (
-		  !m?.messages ||
-		  !Array.isArray(m.messages) ||
-		  m.messages.length === 0
+		!m?.messages ||
+		!Array.isArray(m.messages) ||
+		m.messages.length === 0
 		) {
-		  return;
+		return;
 		}
 
 		const msg = m.messages[0];
 		if (!msg?.message || msg.key.fromMe === undefined) {
-		  return;
+		return;
 		}
 
 		const sender = msg.key.participant || msg.key.remoteJid;
 		if (!sender || !sock.user) {
-		  return;
+		return;
 		}
 
 		const MyJid = {
-		  id: sock.user.id.split(":")[0] + "@s.whatsapp.net",
-		  lid: sock.user.lid ? sock.user.lid.split(":")[0] + "@lid" : null,
+		id: sock.user.id.split(":")[0] + "@s.whatsapp.net",
+		lid: sock.user.lid ? sock.user.lid.split(":")[0] + "@lid" : null,
 		};
 
 		// Only process messages from the bot itself
 		if (msg.key.fromMe || (MyJid.lid && sender === MyJid.lid)) {
-		  const text =
+		const text =
 			msg.message.conversation ||
 			msg.message.extendedTextMessage?.text ||
 			msg.message.imageMessage?.caption ||
 			msg.message.videoMessage?.caption ||
 			"";
 
-		  if (!text?.trim()) {
+		if (!text?.trim()) {
 			return;
-		  }
+		}
 
-		  const args = text.trim().split(/ +/);
-		  const commandName = args.shift()?.toLowerCase();
+		const args = text.trim().split(/ +/);
+		const commandName = args.shift()?.toLowerCase();
 
-		  if (!commandName) return;
+		if (!commandName) return;
 
-		  const command = commands.get(commandName);
-		  if (command) {
+		const command = commands.get(commandName);
+		if (command) {
 			try {
-			  console.log(
+			console.log(
 				chalk.blue(
-				  `[${sessionName}] Executing command: ${chalk.cyan(
+				`[${sessionName}] Executing command: ${chalk.cyan(
 					commandName
-				  )}`
+				)}`
 				)
-			  );
-			  await command.execute(
+			);
+			await command.execute(
 				sock,
 				msg,
 				args,
@@ -403,62 +403,62 @@ async function startBotInstance(sessionName, options = {}) {
 				startBotInstance,
 				pendingSessions,
 				isSessionFolderEmpty
-			  );
+			);
 			} catch (error) {
-			  console.error(
+			console.error(
 				chalk.red(
-				  `[${sessionName}] ❌ Error executing command "${commandName}": ${error.message}`
+				`[${sessionName}] ❌ Error executing command "${commandName}": ${error.message}`
 				)
-			  );
+			);
 			  // Optionally send error message back to chat
-			  try {
-			   
-			  } catch (sendError) {
+			try {
+			
+			} catch (sendError) {
 				console.error(
-				  chalk.red(
+				chalk.red(
 					`[${sessionName}] Failed to send error message: ${sendError.message}`
-				  )
+				)
 				);
-			  }
 			}
-		  }
+			}
 		}
-	  } catch (error) {
+		}
+	} catch (error) {
 		console.error(
-		  chalk.red(
+		chalk.red(
 			`[${sessionName}] Error processing message: ${error.message}`
-		  )
+		)
 		);
-	  }
+	}
 	});
 
 	// Add more event listeners for better monitoring
 	sock.ev.on("connection.error", (error) => {
-	  console.error(
+	console.error(
 		chalk.red(`[${sessionName}] Connection error: ${error.message}`)
-	  );
+	);
 	});
 
 	sock.ev.on("messaging-history.set", () => {
-	  console.log(chalk.green(`[${sessionName}] Message history synced`));
+	console.log(chalk.green(`[${sessionName}] Message history synced`));
 	});
 
 	return sock;
-  } catch (error) {
+} catch (error) {
 	console.error(
-	  chalk.red(
+	chalk.red(
 		`[${sessionName}] Failed to start bot instance: ${error.message}`
-	  )
+	)
 	);
 	throw error;
-  }
+}
 }
 
 /**
  * Interactive CLI to start WhatsApp sessions using inquirer.js with colored output
  */
 async function startSessions() {
-  try {
+try {
 	console.log(chalk.blueBright("🤖 WhatsApp Multi-Session Bot Manager"));
 	console.log(chalk.blueBright("====================================="));
 	console.log(chalk.blueBright("Available sessions:"));
@@ -466,293 +466,293 @@ async function startSessions() {
 	let sessions = [];
 
 	try {
-	  if (fs.existsSync(SESSIONS_DIR)) {
+	if (fs.existsSync(SESSIONS_DIR)) {
 		sessions = fs.readdirSync(SESSIONS_DIR).filter((session) => {
-		  const sessionPath = path.join(SESSIONS_DIR, session);
-		  try {
+		const sessionPath = path.join(SESSIONS_DIR, session);
+		try {
 			return (
-			  fs.statSync(sessionPath).isDirectory() &&
-			  !isSessionFolderEmpty(sessionPath)
+			fs.statSync(sessionPath).isDirectory() &&
+			!isSessionFolderEmpty(sessionPath)
 			);
-		  } catch (error) {
+		} catch (error) {
 			console.warn(
-			  chalk.yellow(
+			chalk.yellow(
 				`Warning: Cannot access session ${session}: ${error.message}`
-			  )
+			)
 			);
 			return false;
-		  }
+		}
 		});
-	  }
+	}
 	} catch (error) {
-	  console.error(
+	console.error(
 		chalk.red(`Error reading sessions directory: ${error.message}`)
-	  );
-	  sessions = [];
+	);
+	sessions = [];
 	}
 
 	if (sessions.length > 0) {
-	  sessions.forEach((session, index) => {
+	sessions.forEach((session, index) => {
 		const status = activeSessions[session]
-		  ? chalk.green("(Active)")
-		  : chalk.gray("(Inactive)");
+		? chalk.green("(Active)")
+		: chalk.gray("(Inactive)");
 		console.log(chalk.cyan(`${index + 1}. ${session} ${status}`));
-	  });
+	});
 	} else {
-	  console.log(chalk.yellow("No existing sessions found."));
+	console.log(chalk.yellow("No existing sessions found."));
 	}
 
 	const choices = [
-	  { name: chalk.white("🚀 Run an existing session"), value: "run" },
-	  { name: chalk.white("🌟 Start all sessions"), value: "all" },
-	  { name: chalk.white("➕ Create a new session"), value: "new" },
-	  { name: chalk.white("🗑️  Delete a session"), value: "delete" },
-	  { name: chalk.white("❌ Exit"), value: "exit" },
+	{ name: chalk.white("🚀 Run an existing session"), value: "run" },
+	{ name: chalk.white("🌟 Start all sessions"), value: "all" },
+	{ name: chalk.white("➕ Create a new session"), value: "new" },
+	{ name: chalk.white("🗑️  Delete a session"), value: "delete" },
+	{ name: chalk.white("❌ Exit"), value: "exit" },
 	];
 
 	// Filter choices based on available sessions
 	const availableChoices =
-	  sessions.length > 0
+	sessions.length > 0
 		? choices
 		: choices.filter((c) => !["run", "delete"].includes(c.value));
 
 	const { action } = await inquirer.prompt([
-	  {
+	{
 		type: "list",
 		name: "action",
 		message: chalk.cyan("Choose an option:"),
 		choices: availableChoices,
-	  },
+	},
 	]);
 
 	if (action === "exit") {
-	  console.log(chalk.yellow("Goodbye! 👋"));
-	  process.exit(0);
+	console.log(chalk.yellow("Goodbye! 👋"));
+	process.exit(0);
 	}
 
 	if (action === "delete") {
-	  const { sessionName } = await inquirer.prompt([
+	const { sessionName } = await inquirer.prompt([
 		{
-		  type: "list",
-		  name: "sessionName",
-		  message: chalk.red("Select a session to delete:"),
-		  choices: sessions.map((session) => ({
+		type: "list",
+		name: "sessionName",
+		message: chalk.red("Select a session to delete:"),
+		choices: sessions.map((session) => ({
 			name: chalk.white(session),
 			value: session,
-		  })),
+		})),
 		},
-	  ]);
+	]);
 
-	  const { confirm } = await inquirer.prompt([
+	const { confirm } = await inquirer.prompt([
 		{
-		  type: "confirm",
-		  name: "confirm",
-		  message: chalk.red(
+		type: "confirm",
+		name: "confirm",
+		message: chalk.red(
 			`Are you sure you want to delete session "${sessionName}"? This cannot be undone.`
-		  ),
-		  default: false,
+		),
+		default: false,
 		},
-	  ]);
+	]);
 
-	  if (confirm) {
+	if (confirm) {
 		try {
-		  const sessionPath = path.join(SESSIONS_DIR, sessionName);
+		const sessionPath = path.join(SESSIONS_DIR, sessionName);
 
 		  // Close active session if running
-		  if (activeSessions[sessionName]) {
+		if (activeSessions[sessionName]) {
 			activeSessions[sessionName].ev.removeAllListeners();
 			activeSessions[sessionName].end();
 			delete activeSessions[sessionName];
-		  }
+		}
 
 		  // Remove session folder
-		  if (fs.existsSync(sessionPath)) {
+		if (fs.existsSync(sessionPath)) {
 			fs.rmSync(sessionPath, { recursive: true, force: true });
 			console.log(
-			  chalk.green(`✅ Session "${sessionName}" deleted successfully`)
+			chalk.green(`✅ Session "${sessionName}" deleted successfully`)
 			);
-		  }
-		} catch (error) {
-		  console.error(
-			chalk.red(`Failed to delete session: ${error.message}`)
-		  );
 		}
-	  } else {
+		} catch (error) {
+		console.error(
+			chalk.red(`Failed to delete session: ${error.message}`)
+		);
+		}
+	} else {
 		console.log(chalk.yellow("Deletion cancelled"));
-	  }
+	}
 
 	  // Restart the menu
-	  return startSessions();
+	return startSessions();
 	}
 
 	if (action === "all") {
-	  const validSessions = sessions.filter((session) => {
+	const validSessions = sessions.filter((session) => {
 		const sessionPath = path.join(SESSIONS_DIR, session);
 		return !isSessionFolderEmpty(sessionPath);
-	  });
+	});
 
-	  if (validSessions.length === 0) {
+	if (validSessions.length === 0) {
 		console.log(
-		  chalk.yellow("No valid sessions found. Creating a default session...")
+		chalk.yellow("No valid sessions found. Creating a default session...")
 		);
 		await startBotInstance("default");
 		return;
-	  }
+	}
 
-	  console.log(
+	console.log(
 		chalk.green(`Found ${validSessions.length} valid sessions. Starting...`)
-	  );
-	  const startPromises = validSessions.map((session) => {
+	);
+	const startPromises = validSessions.map((session) => {
 		if (!activeSessions[session]) {
-		  return startBotInstance(session).catch((error) => {
+		return startBotInstance(session).catch((error) => {
 			console.error(
-			  chalk.red(`Failed to start session ${session}: ${error.message}`)
+			chalk.red(`Failed to start session ${session}: ${error.message}`)
 			);
-		  });
+		});
 		} else {
-		  console.log(
+		console.log(
 			chalk.yellow(`Session ${session} is already active, skipping...`)
-		  );
-		  return Promise.resolve();
+		);
+		return Promise.resolve();
 		}
-	  });
+	});
 
-	  await Promise.allSettled(startPromises);
+	await Promise.allSettled(startPromises);
 	} else if (action === "new") {
-	  const { sessionName } = await inquirer.prompt([
+	const { sessionName } = await inquirer.prompt([
 		{
-		  type: "input",
-		  name: "sessionName",
-		  message: chalk.cyan("Enter a name for the new session:"),
-		  validate: (input) => {
+		type: "input",
+		name: "sessionName",
+		message: chalk.cyan("Enter a name for the new session:"),
+		validate: (input) => {
 			input = input.trim();
 			if (!input) {
-			  return chalk.red("Session name cannot be empty");
+			return chalk.red("Session name cannot be empty");
 			}
 			if (!isValidSessionName(input)) {
-			  return chalk.yellow(
+			return chalk.yellow(
 				"Invalid session name. Use 3-20 characters (letters, numbers, -, _ only)."
-			  );
+			);
 			}
 			const sessionPath = path.join(SESSIONS_DIR, input);
 			if (
-			  fs.existsSync(sessionPath) &&
-			  !isSessionFolderEmpty(sessionPath)
+			fs.existsSync(sessionPath) &&
+			!isSessionFolderEmpty(sessionPath)
 			) {
-			  return chalk.yellow(
+			return chalk.yellow(
 				`Session '${input}' already exists. Choose a different name.`
-			  );
+			);
 			}
 			return true;
-		  },
 		},
-	  ]);
+		},
+	]);
 
-	  console.log(
+	console.log(
 		chalk.green(`Creating new session: ${chalk.cyan(sessionName.trim())}`)
-	  );
-	  await startBotInstance(sessionName.trim());
+	);
+	await startBotInstance(sessionName.trim());
 	} else if (action === "run") {
-	  if (sessions.length === 0) {
+	if (sessions.length === 0) {
 		console.log(
-		  chalk.yellow(
+		chalk.yellow(
 			"No sessions available to run. Creating a default session..."
-		  )
+		)
 		);
 		await startBotInstance("default");
 		return;
-	  }
+	}
 
-	  const { sessionName } = await inquirer.prompt([
+	const { sessionName } = await inquirer.prompt([
 		{
-		  type: "list",
-		  name: "sessionName",
-		  message: chalk.cyan("Select a session to start:"),
-		  choices: sessions.map((session) => {
+		type: "list",
+		name: "sessionName",
+		message: chalk.cyan("Select a session to start:"),
+		choices: sessions.map((session) => {
 			const status = activeSessions[session]
-			  ? chalk.green("(Active)")
-			  : chalk.gray("(Inactive)");
+			? chalk.green("(Active)")
+			: chalk.gray("(Inactive)");
 			return {
-			  name: `${chalk.white(session)} ${status}`,
-			  value: session,
+			name: `${chalk.white(session)} ${status}`,
+			value: session,
 			};
-		  }),
+		}),
 		},
-	  ]);
+	]);
 
-	  if (activeSessions[sessionName]) {
+	if (activeSessions[sessionName]) {
 		console.log(chalk.yellow(`Session ${sessionName} is already active!`));
-	  } else {
+	} else {
 		console.log(
-		  chalk.green(`Starting session: ${chalk.cyan(sessionName)}`)
+		chalk.green(`Starting session: ${chalk.cyan(sessionName)}`)
 		);
 		await startBotInstance(sessionName);
-	  }
 	}
-  } catch (error) {
+	}
+} catch (error) {
 	if (error.isTtyError) {
-	  console.error(
+	console.error(
 		chalk.red("This terminal doesn't support interactive prompts")
-	  );
+	);
 	} else {
-	  console.error(chalk.red(`Error in startSessions: ${error.message}`));
+	console.error(chalk.red(`Error in startSessions: ${error.message}`));
 	}
-  }
+}
 }
 
 // Graceful shutdown handling
 process.on("SIGINT", async () => {
-  console.log(chalk.yellow("\n🛑 Gracefully shutting down..."));
+console.log(chalk.yellow("\n🛑 Gracefully shutting down..."));
 
-  const shutdownPromises = Object.entries(activeSessions).map(
+const shutdownPromises = Object.entries(activeSessions).map(
 	async ([sessionName, sock]) => {
-	  try {
+	try {
 		console.log(chalk.green(`Closing session: ${chalk.cyan(sessionName)}`));
 		sock.ev.removeAllListeners();
 		sock.end();
-	  } catch (error) {
+	} catch (error) {
 		console.error(
-		  chalk.red(`Error closing session ${sessionName}: ${error.message}`)
+		chalk.red(`Error closing session ${sessionName}: ${error.message}`)
 		);
-	  }
 	}
-  );
+	}
+);
 
-  await Promise.allSettled(shutdownPromises);
-  console.log(chalk.green("✅ All sessions closed. Goodbye!"));
-  process.exit(0);
+await Promise.allSettled(shutdownPromises);
+console.log(chalk.green("✅ All sessions closed. Goodbye!"));
+process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
-  console.log(chalk.yellow("Received SIGTERM, shutting down gracefully..."));
-  process.emit("SIGINT");
+console.log(chalk.yellow("Received SIGTERM, shutting down gracefully..."));
+process.emit("SIGINT");
 });
 
 // Handle uncaught exceptions
 process.on("uncaughtException", (error) => {
-  console.error(chalk.red("Uncaught exception:"), error);
-  console.error(chalk.red("Stack:"), error.stack);
+console.error(chalk.red("Uncaught exception:"), error);
+console.error(chalk.red("Stack:"), error.stack);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.error(
+console.error(
 	chalk.red("Unhandled Rejection at:"),
 	promise,
 	chalk.red("reason:"),
 	reason
-  );
+);
 });
 
 // Start the bot
 startSessions().catch((error) => {
-  console.error(chalk.red(`Failed to start sessions: ${error.message}`));
-  process.exit(1);
+console.error(chalk.red(`Failed to start sessions: ${error.message}`));
+process.exit(1);
 });
 
 module.exports = {
-  startBotInstance,
-  isSessionFolderEmpty,
-  pendingSessions,
-  activeSessions,
-  cleanupSession,
+startBotInstance,
+isSessionFolderEmpty,
+pendingSessions,
+activeSessions,
+cleanupSession,
 };
